@@ -6,6 +6,7 @@
         <span class="font-weight-light">Taker</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-icon>{{getWifiIcon}}</v-icon>
     </v-toolbar>
 
     <v-content>
@@ -20,6 +21,20 @@ export default {
   components: {},
   data() {
     return {};
+  },
+  computed: {
+    getWifiIcon() {
+      return this.$store.getters.isConnected ? "wifi" : "wifi_off"
+    }
+  },
+  created() {
+    window.addEventListener("offline", () => {
+      this.$store.dispatch( 'SET_CONNECTED', false)
+    });
+
+    window.addEventListener("online", () => {
+      this.$store.dispatch( 'SET_CONNECTED', true)
+    });
   }
 };
 </script>
