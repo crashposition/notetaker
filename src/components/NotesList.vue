@@ -1,15 +1,15 @@
 <template>
   <v-container>
-    <v-text-field v-model="newNote" label="Enter your note" @keydown.enter="addNote"></v-text-field>
+    <v-text-field v-model="newNote" label="Your note" @keydown.enter="addNote"></v-text-field>
     <h2>Notes</h2>
 
     <v-card>
       <v-list>
         <template v-for="(note, index) in notes">
           <v-list-tile :key="index">
-            <v-text-field :value="note.text" @keydown.enter="editNote(index, $event.target.value)"></v-text-field>
+            <v-text-field :value="note.text" @keydown.enter="editNote(note.id, $event.target.value)"></v-text-field>
             <v-spacer></v-spacer>
-            <v-btn fab small outline color="red" @click="deleteNote(index)">
+            <v-btn fab small outline color="red" @click="deleteNote(note.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </v-list-tile>
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+const uuidv1 = require('uuid/v1');
+
 export default {
   data: () => ({
     newNote: ""
@@ -34,21 +36,39 @@ export default {
       if (this.newNote !== "") {
         var note = {
           text: this.newNote,
-          lastUpdated: Date.now()
+          lastUpdated: Date.now(),
+          id: uuidv1()
         };
         this.$store.dispatch("ADD_NOTE", { note });
         this.newNote = "";
       }
     },
-    editNote(index, value) {
+    editNote(id, value) {
       var note = {
         text: value,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
+        id: id
       };
-      this.$store.dispatch("EDIT_NOTE", { note, index });
+      this.$store.dispatch("EDIT_NOTE", { note });
     },
-    deleteNote(index) {
-      this.$store.dispatch("DELETE_NOTE", { index });
+    deleteNote(id) {
+      this.$store.dispatch("DELETE_NOTE", { id });
+    }
+  },
+  watch: {
+    notes: {
+      handler() {
+        console.log("Notes changed!");
+        localStorage.setItem("notes", JSON.stringify(this.notes));
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    console.log("App mounted!");
+    if (localStorage.getItem("notes")) {
+      var notes = JSON.parse(localStorage.getItem("notes"));
+      this.$store.dispatch("REPLACE_NOTES", { notes });
     }
   }
 };
