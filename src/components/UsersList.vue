@@ -6,6 +6,18 @@
       @keydown.enter="changeName($event.target.value)"
     ></v-text-field>
     <h2>Users</h2>
+
+    <v-card>
+      <v-list>
+        <template v-for="(user, index) in users">
+          <v-list-tile :key="index">
+            <v-text-field :value="user.username" @keydown.enter="editNote(note.id, $event.target.value)"></v-text-field>
+          </v-list-tile>
+        </template>
+      </v-list>
+    </v-card>
+
+
   </v-container>
 </template>
 
@@ -15,26 +27,13 @@ export default {
   computed: {
     username() {
       return this.$store.getters.username;
+    },
+    users() {
+      return this.$store.getters.users;
     }
   },
   methods: {
     changeName(username) {
-      this.$store.dispatch("CHANGE_NAME", { username });
-    }
-  },
-  watch: {
-    username: {
-      handler() {
-        console.log("Username changed!");
-        localStorage.setItem("username", JSON.stringify(this.username));
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    console.log("App mounted!");
-    if (localStorage.getItem("username")) {
-      var username = JSON.parse(localStorage.getItem("username"));
       this.$store.dispatch("CHANGE_NAME", { username });
     }
   }

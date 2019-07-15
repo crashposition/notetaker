@@ -64,12 +64,5 @@ export default {
       deep: true
     }
   },
-  mounted() {
-    console.log("App mounted!");
-    if (localStorage.getItem("notes")) {
-      var notes = JSON.parse(localStorage.getItem("notes"));
-      this.$store.dispatch("REPLACE_NOTES", { notes });
-    }
-  }
 };
 </script>

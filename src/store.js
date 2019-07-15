@@ -1,12 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import _ from "lodash";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     isConnected: window.navigator.onLine,
+    userID: "",
     username: "",
+    users: [],
     notes: [],
     socket: {
       isConnected: false,
@@ -16,7 +19,9 @@ export default new Vuex.Store({
   },
   getters: {
     isConnected: state => state.isConnected,
+    userID: state => state.userID,
     username: state => state.username,
+    users: state => state.users,
     notes: state => state.notes
   },
   mutations: {
@@ -25,6 +30,9 @@ export default new Vuex.Store({
     },
     CHANGE_NAME: (state, payload) => {
       state.username = payload.username;
+    },
+    CHANGE_NAME_ID: (state, payload) => {
+      state.userID = payload.userID;
     },
     ADD_NOTE: (state, payload) => {
       state.notes.push(payload.note);
@@ -38,8 +46,7 @@ export default new Vuex.Store({
         return note.id !== payload.id;
       });
     },
-    REPLACE_NOTES: (state, payload) => {
-      // TODO: Sub optimal
+    INIT_NOTES: (state, payload) => {
       state.notes = payload.notes;
     },
     // SOCKETS ---------------------------
@@ -56,7 +63,25 @@ export default new Vuex.Store({
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE(state, message) {
+      console.log("Ping Receive");
       state.socket.message = message;
+
+      // Manage Users
+      if (message.payload.user.userID !== state.userID) {
+        var newUser = message.payload.user;
+        var userIndex = _.findIndex(state.users, function(o) {
+          return o.userID == newUser.userID;
+        });
+
+        if (userIndex === -1) {
+          state.users.push(newUser);
+        } else {
+          state.users.splice(userIndex, 1, newUser);
+        }
+      }
+
+      // Manage Notes
+
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {
@@ -73,6 +98,9 @@ export default new Vuex.Store({
     CHANGE_NAME: (context, payload) => {
       context.commit("CHANGE_NAME", payload);
     },
+    CHANGE_NAME_ID: (context, payload) => {
+      context.commit("CHANGE_NAME_ID", payload);
+    },
     ADD_NOTE: (context, payload) => {
       context.commit("ADD_NOTE", payload);
     },
@@ -82,15 +110,12 @@ export default new Vuex.Store({
     DELETE_NOTE: (context, payload) => {
       context.commit("DELETE_NOTE", payload);
     },
-    REPLACE_NOTES: (context, payload) => {
-      context.commit("REPLACE_NOTES", payload);
+    INIT_NOTES: (context, payload) => {
+      context.commit("INIT_NOTES", payload);
+    },
+    PING_USERS: (context, payload) => {
+      console.log("Ping Send");
+      Vue.prototype.$socket.sendObj({ payload });
     }
-    /*
-        sendMessage: function(context, message) {
-      .....
-      Vue.prototype.$socket.sendObj( {message: message} )
-      .....
-    }
-    */
   }
 });

@@ -16,25 +16,61 @@
 </template>
 
 <script>
+import { setInterval, clearInterval } from "timers";
+const uuidv1 = require("uuid/v1");
+
 export default {
   name: "App",
   components: {},
   data() {
-    return {};
+    return {
+      intervalPing: null
+    };
   },
   computed: {
     getWifiIcon() {
-      return this.$store.getters.isConnected ? "wifi" : "wifi_off"
+      return this.$store.getters.isConnected ? "wifi" : "wifi_off";
     }
   },
-  created() {
-    window.addEventListener("offline", () => {
-      this.$store.dispatch( 'SET_CONNECTED', false)
-    });
+  methods: {
+    onOnline() {
+      this.$store.dispatch("SET_CONNECTED", true);
+    },
+    onOffline() {
+      this.$store.dispatch("SET_CONNECTED", false);
+    },
+    pingUsers() {
+      var payload = {};
+      payload.user = {};
+      payload.user.userID = this.$store.getters.userID;
+      payload.user.username = this.$store.getters.username;
+      payload.user.lastUpdated = Date.now();
+      this.$store.dispatch("PING_USERS", payload);
+    }
+  },
+  mounted() {
+    // Listen for network changes
+    window.addEventListener("offline", this.onOffline);
+    window.addEventListener("online", this.onOnline);
 
-    window.addEventListener("online", () => {
-      this.$store.dispatch( 'SET_CONNECTED', true)
-    });
+    // username
+    var userID = uuidv1();
+    this.$store.dispatch("CHANGE_NAME_ID", { userID });
+    this.$store.dispatch("CHANGE_NAME", { username: "Anonymous" });
+
+    // Local storage
+    if (localStorage.getItem("notes")) {
+      var notes = JSON.parse(localStorage.getItem("notes"));
+      this.$store.dispatch("INIT_NOTES", { notes });
+    }
+
+    // ping users
+    this.intervalPing = setInterval(this.pingUsers, 3000);
+  },
+  beforeDestroy() {
+    window.removeEventListener("offline", this.onOffline);
+    window.removeEventListener("online", this.onOnline);
+    clearInterval(this.intervalPing);
   }
 };
 </script>
