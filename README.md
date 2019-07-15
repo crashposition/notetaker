@@ -39,7 +39,7 @@ You will need NodeJS and the npm package manager on your build machine.
 
 ### Live Demo
 
-A live demo is available at this URL: TODO
+A live demo is available at this URL: https://phidigital.com/notetaker
 
 ## Troublshooting
 
