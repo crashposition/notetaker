@@ -45,7 +45,7 @@ A live demo is available at this URL: TODO
 
 ### Known Issues
 
--
+- Always hit ENTER after changing a textbox or the store may not get the change event. This is a UI TextBox event issue. 
 
 ### Contact
 
