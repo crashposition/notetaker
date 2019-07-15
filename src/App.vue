@@ -45,6 +45,7 @@ export default {
       payload.user.userID = this.$store.getters.userID;
       payload.user.username = this.$store.getters.username;
       payload.user.lastUpdated = Date.now();
+      payload.notes =  this.$store.getters.notes;
       this.$store.dispatch("PING_USERS", payload);
     }
   },

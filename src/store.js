@@ -81,7 +81,26 @@ export default new Vuex.Store({
       }
 
       // Manage Notes
+      // iterate over new notes
+      message.payload.notes.forEach(newNote => {
+        // find index if note ID exists in state
+        var stateIndex = _.findIndex(state.notes, function(o) {
+          return newNote.id == o.id;
+        });
 
+        if (stateIndex !== -1) {
+          // note exists in state
+          var stateNote = state.notes[stateIndex];
+
+          // keep the freshest version
+          if (newNote.lastUpdated > stateNote.lastUpdated) {
+            state.notes.splice(stateIndex, 1, newNote);
+          }
+        } else {
+          // Add note with new ID
+          state.notes.push(newNote);
+        }
+      });
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {
