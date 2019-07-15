@@ -48,11 +48,6 @@ export default new Vuex.Store({
       note.lastUpdated = Date.now(),
       note.isDeleted = true,
       state.notes.splice(index, 1, note);
-/*
-      state.notes = state.notes.filter(function(note) {
-        return note.id !== payload.id;
-      });
-*/
     },
     INIT_NOTES: (state, payload) => {
       state.notes = payload.notes;
@@ -109,8 +104,11 @@ export default new Vuex.Store({
         }
       });
 
-      // Remove deleted notes
-      
+      // Remove expired notes
+      var deleteExpiryTime = Date.now() - 6000
+      state.notes = state.notes.filter(function(note) {
+        return !(note.isDeleted === true && note.lastUpdated < deleteExpiryTime)
+      });      
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {
