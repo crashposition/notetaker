@@ -57,7 +57,7 @@ Please contact me at john@phidigital.com if you have any problems deploying or r
 
 ### Specifications
 
-The full specification for the app is in this [Google Doc](https://docs.google.com/document/d/1etwGDBaJkJO6Y-TrPDayVCD7MNnYShjYb5v12_L0gJ4/edit).
+The full specification for the app is in the supplied Google Doc.
 
 I spent some time up front reviewing the spec and making design decisions that would best meet the requirements. 
 
@@ -79,7 +79,7 @@ In addition to the core stack I've used:
 
 ### Screen recordings
 
-Screen recordings of the dev sessions will be available [on Dropbox](https://www.dropbox.com/sh/8vaysuqh7x6tf6a/AADE7J1kf32iCDWdxJqsTRWIa?dl=0) for the next two weeks.
+Screen recordings of the dev sessions will be available on Dropbox for the next two weeks.
 
 - Session 1: Vue scaffolding, UI development, Model/Store, Local functionality to Add/Edit/Delete Notes (2 hours)
 - Session 2: Local storage, Web sockets setup, UUID for Notes (1 hour)
