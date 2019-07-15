@@ -42,9 +42,17 @@ export default new Vuex.Store({
       state.notes.splice(index, 1, payload.note);
     },
     DELETE_NOTE: (state, payload) => {
+      // Mark note as deleted
+      var index = state.notes.findIndex(item => item.id === payload.id);
+      var note = state.notes[index]
+      note.lastUpdated = Date.now(),
+      note.isDeleted = true,
+      state.notes.splice(index, 1, note);
+/*
       state.notes = state.notes.filter(function(note) {
         return note.id !== payload.id;
       });
+*/
     },
     INIT_NOTES: (state, payload) => {
       state.notes = payload.notes;
@@ -81,7 +89,6 @@ export default new Vuex.Store({
       }
 
       // Manage Notes
-      // iterate over new notes
       message.payload.notes.forEach(newNote => {
         // find index if note ID exists in state
         var stateIndex = _.findIndex(state.notes, function(o) {
@@ -101,6 +108,9 @@ export default new Vuex.Store({
           state.notes.push(newNote);
         }
       });
+
+      // Remove deleted notes
+      
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {

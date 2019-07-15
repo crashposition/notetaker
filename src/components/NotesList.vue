@@ -5,9 +5,9 @@
 
     <v-card>
       <v-list>
-        <template v-for="(note, index) in notes">
+        <template v-for="(note, index) in activeNotes">
           <v-list-tile :key="index">
-            <v-text-field :value="note.text" @keydown.enter="editNote(note.id, $event.target.value)"></v-text-field>
+            <v-text-field :value="note.text" :disabled="notes.isDeleted" @keydown.enter="editNote(note.id, $event.target.value)"></v-text-field>
             <v-spacer></v-spacer>
             <v-btn fab small outline color="red" @click="deleteNote(note.id)">
               <v-icon>delete</v-icon>
@@ -29,6 +29,11 @@ export default {
   computed: {
     notes() {
       return this.$store.getters.notes;
+    },
+    activeNotes() {
+      return this.$store.getters.notes.filter(function(note) {
+        return note.isDeleted !== true;
+      });
     }
   },
   methods: {
