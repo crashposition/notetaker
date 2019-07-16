@@ -63,7 +63,6 @@ export default {
   watch: {
     notes: {
       handler() {
-        console.log("Notes changed!");
         localStorage.setItem("notes", JSON.stringify(this.notes));
       },
       deep: true
